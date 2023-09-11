@@ -14,7 +14,7 @@
         <p>Hola {{name}} {{lastname }}</p>
         <input v-model="name" placeholder="Nombre" />
         <input v-model="lastname" placeholder="Apellido" /><br />
-        <button @click="button++" >
+        <button @click="button++">
             <div v-if="button<=0">Click me!</div>
             <div v-else>Click me: {{ button }}</div>
         </button>
@@ -22,6 +22,30 @@
         <input v-model="num1" placeholder="Primer número" />
         <input v-model="num2" placeholder="Segundo número" />
         <p>La suma de {{num1}} + {{num2}} es : {{+num1 + (+num2)}}</p>
+        <hr />
+        <form>
+            <fieldset>
+                <legend>
+                    Nombre(s):
+                </legend>
+                <input v-model="name1" placeholder="Nombre" name="" />
+            </fieldset>
+            <fieldset>
+                <legend>
+                    Apellido(s):
+                </legend>
+                <input v-model="lastname1" placeholder="Apellido" name="" /><br>
+            </fieldset>
+            <button type="button" v-on:click="addPerson">
+                Save data
+            </button>
+        </form>
+        <ul v-if="persons.length>0">
+            <li v-for="item in persons">{{item.name}} - {{item.lastname}}</li>
+        </ul>
+        <p v-else>
+            No hay personas
+        </p>
     </div>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script>
@@ -31,15 +55,30 @@
             setup() {
                 const name = ref('');
                 const lastname = ref('');
+                const name1 = ref('');
+                const lastname1 = ref('');
                 const button = ref(0);
                 const num1 = ref(0);
                 const num2 = ref(0);
+                const persons = ref([]);
                 return {
                     name,
                     lastname,
+                    name1,
+                    lastname1,
                     button,
                     num1,
                     num2,
+                    persons,
+                }
+            },
+            methods: {
+                addPerson() {
+                    //const person = { name: this.name1, lastname: this.lastname1 }
+                    console.log(this.persons.length);
+                    //this.persons.push(person);
+                    this.persons.push({ name: this.name1, lastname: this.lastname1 });
+                    console.log(this.persons[0]);
                 }
             }
         }).mount('#app')
