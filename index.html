@@ -9,7 +9,7 @@
 
 <body>
     <div id="app">
-        <h1>{{name}}</h1>
+        <!-- <h1>{{name}}</h1>
         <h2>{{lastname}}</h2>
         <p>Hola {{name}} {{lastname }}</p>
         <input v-model="name" placeholder="Nombre" />
@@ -45,13 +45,32 @@
         </ul>
         <p v-else>
             No hay personas
-        </p>
+        </p> -->
+        <form>
+            <fieldset>
+                <legend>Email:</legend>
+                <input type="email" v-model="email" placeholder="Correo" name="" id="">
+            </fieldset>
+            <fieldset>
+                <legend>Password:</legend>
+                <input type="password" v-model="password" placeholder="Contraseña" name="" id="">
+            </fieldset>
+            <button type="button" v-on:click="login">
+                Enviar
+            </button>
+        </form>
+        <!-- <ul v-if="persons.length>0">
+            <li v-for="item in persons">{{item.name}} - {{item.lastname}}</li>
+        </ul>
+        <p v-else>
+            No hay personas
+        </p> -->
     </div>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script>
-        const { createApp, ref } = Vue
+        /*const { createApp, ref } = Vue
 
-        createApp({
+         createApp({
             setup() {
                 const name = ref('');
                 const lastname = ref('');
@@ -79,6 +98,45 @@
                     //this.persons.push(person);
                     this.persons.push({ name: this.name1, lastname: this.lastname1 });
                     console.log(this.persons[0]);
+                }
+            }
+        }).mount('#app') */
+        const { createApp, ref } = Vue
+
+        createApp({
+            setup() {
+                const users = ref([]);
+                const email = ref('');
+                const password = ref('');
+                return {
+                    users,
+                    email,
+                    password
+                }
+            },
+            methods: {
+                async login() {
+                    //Obtener datos
+                    const response = await fetch("users.json");
+                    const users_array = await response.json();
+                    let isLogged = false;
+                    console.log(users_array)
+                    //Recorrer los datos
+                    users_array.forEach(user => {
+                        console.log(user.email);
+                        console.log(user.password)
+                        if (user.email == this.email) {
+                            if (user.password == this.password) {
+                                console.log("Sesion iniciada")
+                                alert("Bienvenido "+ user.name)
+                                isLogged = true;
+                            }
+                        }
+                    });
+                    if (!isLogged) {
+                        console.log("Login fallido")
+                        alert("Login Fallido")
+                    }
                 }
             }
         }).mount('#app')
