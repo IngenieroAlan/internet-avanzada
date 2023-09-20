@@ -6,6 +6,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vue</title>
 </head>
+<style>
+    table.greyGridTable {
+        border: 2px solid #FFFFFF;
+        width: 100%;
+        text-align: center;
+        border-collapse: collapse;
+    }
+
+    table.greyGridTable td,
+    table.greyGridTable th {
+        border: 1px solid #FFFFFF;
+        padding: 3px 4px;
+    }
+
+    table.greyGridTable tbody td {
+        font-size: 13px;
+    }
+
+    table.greyGridTable td:nth-child(even) {
+        background: #EBEBEB;
+    }
+
+    table.greyGridTable thead {
+        background: #FFFFFF;
+        border-bottom: 4px solid #333333;
+    }
+
+    table.greyGridTable thead th {
+        font-size: 15px;
+        font-weight: bold;
+        color: #333333;
+        text-align: center;
+        border-left: 2px solid #333333;
+    }
+
+    table.greyGridTable thead th:first-child {
+        border-left: none;
+    }
+
+    table.greyGridTable tfoot {
+        font-size: 14px;
+        font-weight: bold;
+        color: #333333;
+        border-top: 4px solid #333333;
+    }
+
+    table.greyGridTable tfoot td {
+        font-size: 14px;
+    }
+</style>
 
 <body>
     <div id="app">
@@ -46,19 +96,36 @@
         <p v-else>
             No hay personas
         </p> -->
-        <form>
+        <form v-if="!isLogged">
             <fieldset>
                 <legend>Email:</legend>
-                <input type="email" v-model="email" placeholder="Correo" name="" id="">
+                <input type="email" v-model="email" placeholder="Correo">
             </fieldset>
             <fieldset>
                 <legend>Password:</legend>
-                <input type="password" v-model="password" placeholder="Contraseña" name="" id="">
+                <input type="password" v-model="password" placeholder="Contraseña">
             </fieldset>
             <button type="button" v-on:click="login">
                 Enviar
             </button>
         </form>
+        <table class="greyGridTable" v-else>
+            <thead>
+                <tr>
+                    <th>Personal data</th>
+                    <th>Contact data</th>
+                    <th>Company data</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="u in users">
+                    <td>{{u.name}}<br> {{u.username}}</td>
+                    <td>{{u.email}}<br> {{u.phone}}</td>
+                    <td>{{u.company.name}}<br> {{u.company.catchPhrase}}<br>{{u.company.bs}}</td>
+                </tr>
+            </tbody>
+            </tr>
+        </table>
         <!-- <ul v-if="persons.length>0">
             <li v-for="item in persons">{{item.name}} - {{item.lastname}}</li>
         </ul>
@@ -105,37 +172,51 @@
 
         createApp({
             setup() {
-                const users = ref([]);
-                const email = ref('');
-                const password = ref('');
+                users = ref([]);
+                email = ref('');
+                password = ref('');
+                let tmp = localStorage.getItem("isLogged");
+                if (tmp == null) { tmp = false };
+                console.log(tmp);
+                isLogged = ref(!tmp);
                 return {
                     users,
                     email,
-                    password
+                    password,
+                    isLogged
+                }
+            },
+            mounted: function () {
+                const getUsers = async () => {
+                    const response = await fetch("users.json?v=1");
+                    const tmp_users = await response.json();
+                    this.users = tmp_users;
+                }
+                if (this.isLogged) {
+                    getUsers();
                 }
             },
             methods: {
                 async login() {
-                    //Obtener datos
-                    const response = await fetch("users.json");
-                    const users_array = await response.json();
-                    let isLogged = false;
-                    console.log(users_array)
+                    const response = await fetch("users.json?v=1");
+                    this.users = await response.json();
+                    this.isLogged = false;
                     //Recorrer los datos
-                    users_array.forEach(user => {
-                        console.log(user.email);
-                        console.log(user.password)
+                    this.users.forEach(user => {
                         if (user.email == this.email) {
                             if (user.password == this.password) {
-                                console.log("Sesion iniciada")
-                                alert("Bienvenido "+ user.name)
-                                isLogged = true;
+                                this.isLogged = true;
+                                alert("Bienvenido " + user.name);
+                                localStorage.setItem("user_data", JSON.stringify(user));
+                                localStorage.setItem("isLogged", "true");
                             }
                         }
                     });
-                    if (!isLogged) {
-                        console.log("Login fallido")
-                        alert("Login Fallido")
+                    if (!this.isLogged) {
+                        console.log("Login fallido");
+                        alert("Login Fallido");
+                        this.isLogged = false;
+                        localStorage.setItem("isLogged", "false");
                     }
                 }
             }
