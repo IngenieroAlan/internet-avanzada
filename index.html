@@ -109,23 +109,50 @@
                 Enviar
             </button>
         </form>
-        <table class="greyGridTable" v-else>
-            <thead>
-                <tr>
-                    <th>Personal data</th>
-                    <th>Contact data</th>
-                    <th>Company data</th>
+        <div v-else>
+            <table class="greyGridTable">
+                <thead>
+                    <tr>
+                        <th>Personal data</th>
+                        <th>Contact data</th>
+                        <th>Company data</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="u in users">
+                        <td>{{u.name}}<br> {{u.username}}</td>
+                        <td>{{u.email}}<br> {{u.phone}}</td>
+                        <td>{{u.company.name}}<br> {{u.company.catchPhrase}}<br>{{u.company.bs}}</td>
+                        <td><button @click='edit(u)'>edit</button></td>
+                        <td><button @click="remove(u.id)">delete</button></td>
+                    </tr>
+                </tbody>
                 </tr>
-            </thead>
-            <tbody>
-                <tr v-for="u in users">
-                    <td>{{u.name}}<br> {{u.username}}</td>
-                    <td>{{u.email}}<br> {{u.phone}}</td>
-                    <td>{{u.company.name}}<br> {{u.company.catchPhrase}}<br>{{u.company.bs}}</td>
-                </tr>
-            </tbody>
-            </tr>
-        </table>
+            </table>
+            <button @click="add()">Add</button>
+            <div v-if="action == 'add'">
+                <h2>Add new user</h2>
+                <label for="fullname">Nombre completo</label><br>
+                <input v-model="newUser.name" type="text" name="fullname"><br>
+                <label for="correo">Correo electronico</label><br>
+                <input v-model="newUser.email" type="email" name="correo"><br>
+                <label for="company">Compañia</label><br>
+                <input v-model="newUser.company_name" type="text" name="company"><br><br>
+                <button type="button" @click="save('create')">Save user data</button>
+            </div>
+            <div v-if="action == 'edit'">
+                <h2>Edit user</h2>
+                <label for="fullname">Nombre completo</label><br>
+                <input v-model="newUser.name" type="text" name="fullname"><br>
+                <label for="correo">Correo electronico</label><br>
+                <input v-model="newUser.email" type="email" name="correo"><br>
+                <label for="company">Compañia</label><br>
+                <input v-model="newUser.company_name" type="text" name="company"><br><br>
+                <input type="hidden" v-model="newUser.id">
+                <button type="button" @click="save('update')">Save user data</button>
+            </div>
+        </div>
         <!-- <ul v-if="persons.length>0">
             <li v-for="item in persons">{{item.name}} - {{item.lastname}}</li>
         </ul>
@@ -135,39 +162,6 @@
     </div>
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script>
-        /*const { createApp, ref } = Vue
-
-         createApp({
-            setup() {
-                const name = ref('');
-                const lastname = ref('');
-                const name1 = ref('');
-                const lastname1 = ref('');
-                const button = ref(0);
-                const num1 = ref(0);
-                const num2 = ref(0);
-                const persons = ref([]);
-                return {
-                    name,
-                    lastname,
-                    name1,
-                    lastname1,
-                    button,
-                    num1,
-                    num2,
-                    persons,
-                }
-            },
-            methods: {
-                addPerson() {
-                    //const person = { name: this.name1, lastname: this.lastname1 }
-                    console.log(this.persons.length);
-                    //this.persons.push(person);
-                    this.persons.push({ name: this.name1, lastname: this.lastname1 });
-                    console.log(this.persons[0]);
-                }
-            }
-        }).mount('#app') */
         const { createApp, ref } = Vue
 
         createApp({
@@ -175,15 +169,19 @@
                 users = ref([]);
                 email = ref('');
                 password = ref('');
+                newUser = ref([]);
+                action = ref('');
                 let tmp = localStorage.getItem("isLogged");
                 if (tmp == null) { tmp = false };
                 console.log(tmp);
-                isLogged = ref(!tmp);
+                isLogged = ref(tmp);
                 return {
                     users,
                     email,
                     password,
-                    isLogged
+                    isLogged,
+                    newUser,
+                    action
                 }
             },
             mounted: function () {
@@ -207,6 +205,7 @@
                             if (user.password == this.password) {
                                 this.isLogged = true;
                                 alert("Bienvenido " + user.name);
+                                console.log("Usuario logeado");
                                 localStorage.setItem("user_data", JSON.stringify(user));
                                 localStorage.setItem("isLogged", "true");
                             }
@@ -218,6 +217,49 @@
                         this.isLogged = false;
                         localStorage.setItem("isLogged", "false");
                     }
+                },
+                add() {
+                    this.action = "add";
+                    console.log(this.action);
+                },
+                save(action) {
+                    let company = [];
+                    company.name = this.newUser.company_name;
+                    this.newUser.company = company;
+                    if (action == "create") {
+                        this.newUser.id = microtime = (Date.now() % 1000) / 1000;
+                        this.users.push(this.newUser);
+                        this.newUser = [];
+                        alert("Usuario agregado correctamente.");
+                    }
+                    if (action == "update") {
+                        this.users.forEach(user => {
+                            if(user.id == this.newUser.id){
+                                user.name = this.newUser.name;
+                                user.email = this.newUser.email;
+                                user.company.name = this.newUser.company_name;
+                                alert("Registro actualizado correctamente.");
+                            }
+                        })
+                    }
+                    this.action = '';
+                },
+                remove(id) {
+                    console.log(id);
+                    this.action = "remove";
+                    this.users.forEach((user, index) => {
+                        if (user.id == id) {
+                            this.users.splice(index, 1);
+                            alert("El usuario "+user.name+" ha sido eliminado.");
+                        }
+                    });
+                },
+                edit(target) {
+                    this.action = 'edit';
+                    this.newUser.name = target.name;
+                    this.newUser.email = target.email;
+                    this.newUser.company_name = target.company.name;
+                    this.newUser.id = target.id;
                 }
             }
         }).mount('#app')
