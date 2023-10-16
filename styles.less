@@ -1,0 +1,45 @@
+@mainColor: #D08EF5;
+@textColor: #57F045;
+@colores: #0275d8, #5cb85c, #5bc0de, #f0ad4e, #d9534f;
+
+/* @textColor:#457EF0; */
+.prueba(@bg: red) {
+    background-color: @bg;
+}
+
+.colorear-lista(@items, @i: 1) when (@i=<@items) {
+
+    .item-@{i} {
+        background-color:extract(@colores,@i);
+        border-style: dotted;
+        border-width: 1px;
+    }
+    .colorear-lista(@items; (@i+1))
+}
+
+body {
+    background: white;
+
+    .container {
+        width: 70%;
+        margin: auto;
+
+        form {
+            background-color: @mainColor;
+            border-radius: 5px;
+            box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+            padding: 20px;
+
+            legend {
+                color: @textColor;
+                .prueba(#D08EF5);
+            }
+
+            fieldset {
+                ul {
+                    .colorear-lista(5);
+                }
+            }
+        }
+    }
+}

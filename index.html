@@ -4,266 +4,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vue</title>
+    <title>Login</title>
+    <link rel="stylesheet" href="./styles.css">
 </head>
-<style>
-    table.greyGridTable {
-        border: 2px solid #FFFFFF;
-        width: 100%;
-        text-align: center;
-        border-collapse: collapse;
-    }
-
-    table.greyGridTable td,
-    table.greyGridTable th {
-        border: 1px solid #FFFFFF;
-        padding: 3px 4px;
-    }
-
-    table.greyGridTable tbody td {
-        font-size: 13px;
-    }
-
-    table.greyGridTable td:nth-child(even) {
-        background: #EBEBEB;
-    }
-
-    table.greyGridTable thead {
-        background: #FFFFFF;
-        border-bottom: 4px solid #333333;
-    }
-
-    table.greyGridTable thead th {
-        font-size: 15px;
-        font-weight: bold;
-        color: #333333;
-        text-align: center;
-        border-left: 2px solid #333333;
-    }
-
-    table.greyGridTable thead th:first-child {
-        border-left: none;
-    }
-
-    table.greyGridTable tfoot {
-        font-size: 14px;
-        font-weight: bold;
-        color: #333333;
-        border-top: 4px solid #333333;
-    }
-
-    table.greyGridTable tfoot td {
-        font-size: 14px;
-    }
-</style>
 
 <body>
-    <div id="app">
-        <!-- <h1>{{name}}</h1>
-        <h2>{{lastname}}</h2>
-        <p>Hola {{name}} {{lastname }}</p>
-        <input v-model="name" placeholder="Nombre" />
-        <input v-model="lastname" placeholder="Apellido" /><br />
-        <button @click="button++">
-            <div v-if="button<=0">Click me!</div>
-            <div v-else>Click me: {{ button }}</div>
-        </button>
-        <hr />
-        <input v-model="num1" placeholder="Primer número" />
-        <input v-model="num2" placeholder="Segundo número" />
-        <p>La suma de {{num1}} + {{num2}} es : {{+num1 + (+num2)}}</p>
-        <hr />
+    <div class="container">
         <form>
             <fieldset>
                 <legend>
-                    Nombre(s):
+                    <h2>Formulario de acceso</h2>
                 </legend>
-                <input v-model="name1" placeholder="Nombre" name="" />
+                <fieldset>
+                    <legend>
+                        Correo electronico
+                    </legend>
+                    <input type="text" name="">
+                </fieldset>
+                <fieldset>
+                    <legend>
+                        Contraseña
+                    </legend>
+                    <input type="password" name="">
+                </fieldset>
+                <ul>
+                    <li class="item-1">
+                        <input type="checkbox" name="">
+                        Administrador
+                    </li>
+                    <li class="item-2">
+                        <input type="checkbox" name="">
+                        Gerente
+                    </li>
+                    <li class="item-3">
+                        <input type="checkbox" name="">
+                        Propietario
+                    </li>
+                    <li class="item-4">
+                        <input type="checkbox" name="">
+                        Agente de ventas
+                    </li>
+                    <li class="item-5">
+                        <input type="checkbox" name="">
+                        Prospecto
+                    </li>
+                </ul>
+                <button>Acceder</button>
             </fieldset>
-            <fieldset>
-                <legend>
-                    Apellido(s):
-                </legend>
-                <input v-model="lastname1" placeholder="Apellido" name="" /><br>
-            </fieldset>
-            <button type="button" v-on:click="addPerson">
-                Save data
-            </button>
+            <a href="">¿Olvidaste tu contraseña?</a>
         </form>
-        <ul v-if="persons.length>0">
-            <li v-for="item in persons">{{item.name}} - {{item.lastname}}</li>
-        </ul>
-        <p v-else>
-            No hay personas
-        </p> -->
-        <form v-if="!isLogged">
-            <fieldset>
-                <legend>Email:</legend>
-                <input type="email" v-model="email" placeholder="Correo">
-            </fieldset>
-            <fieldset>
-                <legend>Password:</legend>
-                <input type="password" v-model="password" placeholder="Contraseña">
-            </fieldset>
-            <button type="button" v-on:click="login">
-                Enviar
-            </button>
-        </form>
-        <div v-else>
-            <table class="greyGridTable">
-                <thead>
-                    <tr>
-                        <th>Personal data</th>
-                        <th>Contact data</th>
-                        <th>Company data</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="u in users">
-                        <td>{{u.name}}<br> {{u.username}}</td>
-                        <td>{{u.email}}<br> {{u.phone}}</td>
-                        <td>{{u.company.name}}<br> {{u.company.catchPhrase}}<br>{{u.company.bs}}</td>
-                        <td><button @click='edit(u)'>edit</button></td>
-                        <td><button @click="remove(u.id)">delete</button></td>
-                    </tr>
-                </tbody>
-                </tr>
-            </table>
-            <button @click="add()">Add</button>
-            <div v-if="action == 'add'">
-                <h2>Add new user</h2>
-                <label for="fullname">Nombre completo</label><br>
-                <input v-model="newUser.name" type="text" name="fullname"><br>
-                <label for="correo">Correo electronico</label><br>
-                <input v-model="newUser.email" type="email" name="correo"><br>
-                <label for="company">Compañia</label><br>
-                <input v-model="newUser.company_name" type="text" name="company"><br><br>
-                <button type="button" @click="save('create')">Save user data</button>
-            </div>
-            <div v-if="action == 'edit'">
-                <h2>Edit user</h2>
-                <label for="fullname">Nombre completo</label><br>
-                <input v-model="newUser.name" type="text" name="fullname"><br>
-                <label for="correo">Correo electronico</label><br>
-                <input v-model="newUser.email" type="email" name="correo"><br>
-                <label for="company">Compañia</label><br>
-                <input v-model="newUser.company_name" type="text" name="company"><br><br>
-                <input type="hidden" v-model="newUser.id">
-                <button type="button" @click="save('update')">Save user data</button>
-            </div>
-        </div>
-        <!-- <ul v-if="persons.length>0">
-            <li v-for="item in persons">{{item.name}} - {{item.lastname}}</li>
-        </ul>
-        <p v-else>
-            No hay personas
-        </p> -->
     </div>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <script>
-        const { createApp, ref } = Vue
-
-        createApp({
-            setup() {
-                users = ref([]);
-                email = ref('');
-                password = ref('');
-                newUser = ref([]);
-                action = ref('');
-                let tmp = localStorage.getItem("isLogged");
-                if (tmp == null) { tmp = false };
-                console.log(tmp);
-                isLogged = ref(tmp);
-                return {
-                    users,
-                    email,
-                    password,
-                    isLogged,
-                    newUser,
-                    action
-                }
-            },
-            mounted: function () {
-                const getUsers = async () => {
-                    const response = await fetch("users.json?v=1");
-                    const tmp_users = await response.json();
-                    this.users = tmp_users;
-                }
-                if (this.isLogged) {
-                    getUsers();
-                }
-            },
-            methods: {
-                async login() {
-                    const response = await fetch("users.json?v=1");
-                    this.users = await response.json();
-                    this.isLogged = false;
-                    //Recorrer los datos
-                    this.users.forEach(user => {
-                        if (user.email == this.email) {
-                            if (user.password == this.password) {
-                                this.isLogged = true;
-                                alert("Bienvenido " + user.name);
-                                console.log("Usuario logeado");
-                                localStorage.setItem("user_data", JSON.stringify(user));
-                                localStorage.setItem("isLogged", "true");
-                            }
-                        }
-                    });
-                    if (!this.isLogged) {
-                        console.log("Login fallido");
-                        alert("Login Fallido");
-                        this.isLogged = false;
-                        localStorage.setItem("isLogged", "false");
-                    }
-                },
-                add() {
-                    this.action = "add";
-                    console.log(this.action);
-                },
-                save(action) {
-                    let company = [];
-                    company.name = this.newUser.company_name;
-                    this.newUser.company = company;
-                    if (action == "create") {
-                        this.newUser.id = microtime = (Date.now() % 1000) / 1000;
-                        this.users.push(this.newUser);
-                        this.newUser = [];
-                        alert("Usuario agregado correctamente.");
-                    }
-                    if (action == "update") {
-                        this.users.forEach(user => {
-                            if(user.id == this.newUser.id){
-                                user.name = this.newUser.name;
-                                user.email = this.newUser.email;
-                                user.company.name = this.newUser.company_name;
-                                alert("Registro actualizado correctamente.");
-                            }
-                        })
-                    }
-                    this.action = '';
-                },
-                remove(id) {
-                    console.log(id);
-                    this.action = "remove";
-                    this.users.forEach((user, index) => {
-                        if (user.id == id) {
-                            this.users.splice(index, 1);
-                            alert("El usuario "+user.name+" ha sido eliminado.");
-                        }
-                    });
-                },
-                edit(target) {
-                    this.action = 'edit';
-                    this.newUser.name = target.name;
-                    this.newUser.email = target.email;
-                    this.newUser.company_name = target.company.name;
-                    this.newUser.id = target.id;
-                }
-            }
-        }).mount('#app')
-    </script>
 </body>
 
 </html>
