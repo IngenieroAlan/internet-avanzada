@@ -30,4 +30,6 @@ Route::get('/suma/{numero1}/{numero2}', function (string $numero1, string $numer
 
 Route::get('/user',[UserController::class,'index']);
 
+Route::get('/cars',[CarController::class,'index']);
+
 Route::get('/car/{id}',[CarController::class,'show']);
