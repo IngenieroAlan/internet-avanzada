@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CarController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 /*
@@ -28,3 +29,5 @@ Route::get('/suma/{numero1}/{numero2}', function (string $numero1, string $numer
 })->where(['numero1' => '[-+]?[0-9]+', 'numero2' => '[-+]?[0-9]+']);
 
 Route::get('/user',[UserController::class,'index']);
+
+Route::get('/car/{id}',[CarController::class,'show']);
